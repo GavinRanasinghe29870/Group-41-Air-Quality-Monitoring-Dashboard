@@ -1,8 +1,54 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@section Styles {
+    <link href="~/css/home.css" rel="stylesheet" />
+}
+
+<div class="homepage-wrapper">
+    <!-- Carousel Section -->
+    <div id="homeCarousel" class="carousel slide home-carousel" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="~/images/air1.jpg" class="d-block w-100" alt="Slide 1">
+            </div>
+            <div class="carousel-item">
+                <img src="~/images/a-drone-shot-of-cityscape-buildings-by-the-sea-at-sunset-in-colombo-sri-lanka-2KE5R9R.jpg" class="d-block w-100" alt="Slide 2">
+            </div>
+            <div class="carousel-item">
+                <img src="~/images/istockphoto-1684425118-640x640.jpg" class="d-block w-100" alt="Slide 3">
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#homeCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#homeCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="home-hero">
+        <h1>Colombo Real-Time Air Quality Monitoring</h1>
+        <p>Stay informed about the air you breathe. View real-time air quality data across Colombo.</p>
+        <div class="hero-buttons">
+            <a href="@Url.Action("Index", "dashboards")" class="btn btn-primary btn-lg">View Dashboard</a>
+            <a href="@Url.Action("SystemDashboard", "dashboards")" class="btn btn-outline-secondary btn-lg">Admin Login</a>
+        </div>
+    </div>
+
+    <!-- More sections like features, technology, testimonials, etc., would follow here... -->
 </div>
+
+@section Scripts {
+    <script src="~/js/home.js"></script>
+}

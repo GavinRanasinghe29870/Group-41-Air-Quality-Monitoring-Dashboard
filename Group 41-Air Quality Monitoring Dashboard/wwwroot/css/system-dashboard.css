@@ -1,0 +1,81 @@
+.sysadmin-wrapper {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #f8fafc;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    background-color: #000;
+    color: white;
+    padding: 25px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    border-right: 1px solid #1f2937;
+}
+
+.sidebar h2 {
+    font-size: 22px;
+    color: #FF8C00;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+    color: #cbd5e1;
+    text-decoration: none;
+    font-size: 15px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+.sidebar a i {
+    margin-right: 12px;
+    font-size: 18px;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background-color: #4A4A4A;
+    color: #FF8C00;
+    font-weight: 600;
+}
+
+.content {
+    flex: 1;
+    padding: 30px;
+}
+
+.section {
+    display: none;
+}
+
+.section.active {
+    display: block;
+}
+
+.card {
+    margin-top: 20px;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+}
+
+.btn-primary {
+    background-color: #FF8C00;
+    border-color: #FF8C00;
+}
+
+.btn-primary:hover {
+    background-color: #e67600;
+    border-color: #e67600;
+}
