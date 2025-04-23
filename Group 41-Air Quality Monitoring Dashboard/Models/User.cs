@@ -10,7 +10,7 @@ namespace Group_41_Air_Quality_Monitoring_Dashboard.Models
         public string Username { get; set; }
 
         [Required]
-        public string PasswordHash { get; set; }
+        public string Password { get; set; }
 
         [EmailAddress]
         public string Email { get; set; }

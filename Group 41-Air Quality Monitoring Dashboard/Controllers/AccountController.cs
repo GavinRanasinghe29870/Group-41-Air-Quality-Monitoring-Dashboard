@@ -1,43 +1,51 @@
 using Microsoft.AspNetCore.Mvc;
-using MySql.Data.MySqlClient;
+using Group_41_Air_Quality_Monitoring_Dashboard.Data;
+using Group_41_Air_Quality_Monitoring_Dashboard.Models;
+using System.Linq;
 
-namespace Group_41_Air_Quality_Monitoring_Dashboard.Controllers
+namespace YourProjectNamespace.Controllers
 {
     public class AccountController : Controller
     {
-        // Update your actual connection string
-        private readonly string _connectionString = "server=localhost;database=MyAppDb;user=root;password=yourpassword;";
+        private readonly ApplicationDbContext _context;
 
-        [HttpGet]
-        public IActionResult Login()
+        public AccountController(ApplicationDbContext context)
         {
-            return View();
+            _context = context;
+        }
+
+        public IActionResult Login() => View();
+        public IActionResult Register() => View();
+
+        [HttpPost]
+        public IActionResult Register(User user)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Users.Add(user);
+                _context.SaveChanges();
+                return RedirectToAction("Login");
+            }
+            return View(user);
         }
 
         [HttpPost]
         public IActionResult Login(string username, string password)
         {
-            using var conn = new MySqlConnection(_connectionString);
-            conn.Open();
-
-            var cmd = new MySqlCommand("SELECT * FROM Users WHERE Username = @u", conn);
-            cmd.Parameters.AddWithValue("@u", username);
-
-            using var reader = cmd.ExecuteReader();
-            if (reader.Read())
+            var user = _context.Users.FirstOrDefault(u => u.Username == username && u.Password == password);
+            if (user != null)
             {
-                var dbPassword = reader["Password"].ToString();
-                if (password == dbPassword)
-                {
-                    // You can add session logic here
-                    // HttpContext.Session.SetString("Username", username);
-
-                    return RedirectToAction("Index", "Users");
-                }
+                HttpContext.Session.SetString("Username", user.Username);
+                return RedirectToAction("Index", "Home");
             }
-
-            ViewBag.Error = "Invalid username or password";
+            ViewBag.Message = "Invalid credentials";
             return View();
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login");
         }
     }
 }
