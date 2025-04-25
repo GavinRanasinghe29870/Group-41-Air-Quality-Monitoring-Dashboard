@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Group_41_Air_Quality_Monitoring_Dashboard.Data;
 using Group_41_Air_Quality_Monitoring_Dashboard.Models;
+using Microsoft.AspNetCore.Http;
 using System.Linq;
 
-namespace YourProjectNamespace.Controllers
+namespace Group_41_Air_Quality_Monitoring_Dashboard.Controllers
 {
     public class AccountController : Controller
     {
@@ -14,19 +15,26 @@ namespace YourProjectNamespace.Controllers
             _context = context;
         }
 
-        public IActionResult Login() => View();
-        public IActionResult Register() => View();
+        public IActionResult Login() => View("~/Views/Accounts/Login.cshtml");
+        public IActionResult Register() => View("~/Views/Accounts/Register.cshtml");
 
         [HttpPost]
         public IActionResult Register(User user)
         {
             if (ModelState.IsValid)
             {
+                if (_context.Users.Any(u => u.Username == user.Username))
+                {
+                    ViewBag.Message = "Username already exists.";
+                    return View("~/Views/Accounts/Register.cshtml", user);
+                }
+
                 _context.Users.Add(user);
                 _context.SaveChanges();
                 return RedirectToAction("Login");
             }
-            return View(user);
+
+            return View("~/Views/Accounts/Register.cshtml", user);
         }
 
         [HttpPost]
@@ -38,8 +46,9 @@ namespace YourProjectNamespace.Controllers
                 HttpContext.Session.SetString("Username", user.Username);
                 return RedirectToAction("Index", "Home");
             }
+
             ViewBag.Message = "Invalid credentials";
-            return View();
+            return View("~/Views/Accounts/Login.cshtml");
         }
 
         public IActionResult Logout()
