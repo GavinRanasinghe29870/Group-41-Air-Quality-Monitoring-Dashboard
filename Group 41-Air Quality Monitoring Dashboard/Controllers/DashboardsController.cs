@@ -19,5 +19,6 @@ namespace Group_41_Air_Quality_Monitoring_Dashboard.Controllers
             return View();
         }
 
+
     }
 }

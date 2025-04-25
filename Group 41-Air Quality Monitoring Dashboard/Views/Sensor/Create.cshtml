@@ -1,0 +1,56 @@
+﻿@model Group_41_Air_Quality_Monitoring_Dashboard.Models.Sensor
+
+@{
+    ViewData["Title"] = "Add Sensor";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="mb-4">Add New Sensor</h2>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-success">
+        @ViewBag.Message
+    </div>
+}
+
+@if (!ViewData.ModelState.IsValid && ViewData.ModelState.Values.SelectMany(v => v.Errors).Any())
+{
+    <div class="alert alert-danger">
+        <strong>There was a problem with your submission:</strong>
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <p>@error.ErrorMessage</p>
+        }
+    </div>
+}
+
+<form asp-action="Create" asp-controller="Sensor" method="post" class="row g-3">
+    <div class="col-md-4">
+        <label asp-for="SensorId" class="form-label"></label>
+        <input asp-for="SensorId" class="form-control" />
+        <span asp-validation-for="SensorId" class="text-danger"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="Location" class="form-label"></label>
+        <input asp-for="Location" class="form-control" />
+        <span asp-validation-for="Location" class="text-danger"></span>
+    </div>
+    <div class="col-md-2">
+        <label asp-for="Latitude" class="form-label"></label>
+        <input asp-for="Latitude" class="form-control" step="any" />
+        <span asp-validation-for="Latitude" class="text-danger"></span>
+    </div>
+    <div class="col-md-2">
+        <label asp-for="Longitude" class="form-label"></label>
+        <input asp-for="Longitude" class="form-control" step="any" />
+        <span asp-validation-for="Longitude" class="text-danger"></span>
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Add Sensor</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
