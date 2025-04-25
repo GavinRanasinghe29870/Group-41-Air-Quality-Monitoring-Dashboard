@@ -19,8 +19,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-builder.Services.AddSession();
-app.UseSession();
+//builder.Services.AddSession();
+//app.UseSession();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
