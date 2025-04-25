@@ -1,4 +1,6 @@
-﻿@{
+﻿@model IEnumerable<Group_41_Air_Quality_Monitoring_Dashboard.Models.Sensor>
+
+@{
     ViewData["Title"] = "Dashboards";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -20,31 +22,11 @@
     <a href="@Url.Action("AQIDashboard", "Dashboards")" class="nav-link">
         <i class="bi bi-map"></i> Public
     </a>
-
-
 </div>
 
-<div class="main-content active" id="sensor-management">
-    <h1 class="mb-4">Sensor Management</h1>
-    <div class="card">
-        <div class="card-header">Add New Sensor</div>
-        <div class="card-body">
-            <form id="sensor-form" class="row g-3">
-                <div class="col-md-4"><input type="text" class="form-control" id="sensorId" placeholder="Sensor ID" required></div>
-                <div class="col-md-4"><input type="text" class="form-control" id="location" placeholder="Location Name" required></div>
-                <div class="col-md-2"><input type="number" class="form-control" id="lat" placeholder="Latitude" required></div>
-                <div class="col-md-2"><input type="number" class="form-control" id="lng" placeholder="Longitude" required></div>
-                <div class="col-12"><button type="submit" class="btn btn-primary">Add Sensor</button></div>
-            </form>
-            <ul class="list-group mt-4" id="sensor-list"></ul>
-        </div>
-    </div>
+<div class="main-content" id="sensor-management">
+    @await Html.PartialAsync("~/Views/Sensor/Create.cshtml")
 </div>
-
-<div class="main-content" id="public-dashboard" style="display:none;">
-    <div id="dynamic-section-container"></div>
-</div>
-
 
 <div class="main-content" id="simulation-settings">
     <h1 class="mb-4">Simulation Settings</h1>
@@ -92,5 +74,4 @@
 
 @section Scripts {
     <script src="~/js/dashboard.js"></script>
-
 }

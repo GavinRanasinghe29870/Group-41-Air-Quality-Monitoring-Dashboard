@@ -11,5 +11,8 @@ namespace Group_41_Air_Quality_Monitoring_Dashboard.Data
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Sensor> Sensors { get; set; }
+        public DbSet<AQIData> AQIData { get; set; }
+
     }
 }
