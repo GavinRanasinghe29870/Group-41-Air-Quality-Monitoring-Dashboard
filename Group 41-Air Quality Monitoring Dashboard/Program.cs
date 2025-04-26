@@ -1,4 +1,5 @@
 using Group_41_Air_Quality_Monitoring_Dashboard.Data;
+using Group_41_Air_Quality_Monitoring_Dashboard.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +9,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddHostedService<SimulationService>();
 
 var app = builder.Build();
 
