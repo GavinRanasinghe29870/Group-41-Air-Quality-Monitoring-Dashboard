@@ -68,6 +68,9 @@ namespace Group_41_Air_Quality_Monitoring_Dashboard.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Sensors");
