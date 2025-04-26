@@ -5,51 +5,117 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="mb-4">Add New Sensor</h2>
+<div class="container py-5">
+    <div class="card shadow-sm mb-5">
+        <div class="card-body">
+            <h2 class="card-title mb-4">➕ Add New Sensor</h2>
 
-@if (ViewBag.Message != null)
-{
-    <div class="alert alert-success">
-        @ViewBag.Message
-    </div>
-}
+            @if (ViewBag.Message != null)
+            {
+                <div class="alert alert-success" role="alert">
+                    @ViewBag.Message
+                </div>
+            }
 
-@if (!ViewData.ModelState.IsValid && ViewData.ModelState.Values.SelectMany(v => v.Errors).Any())
-{
-    <div class="alert alert-danger">
-        <strong>There was a problem with your submission:</strong>
-        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-        {
-            <p>@error.ErrorMessage</p>
-        }
-    </div>
-}
+            @if (!ViewData.ModelState.IsValid && ViewData.ModelState.Values.SelectMany(v => v.Errors).Any())
+            {
+                <div class="alert alert-danger" role="alert">
+                    <strong>There was a problem:</strong>
+                    <ul class="mb-0">
+                        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                        {
+                            <li>@error.ErrorMessage</li>
+                        }
+                    </ul>
+                </div>
+            }
 
-<form asp-action="Create" asp-controller="Sensor" method="post" class="row g-3">
-    <div class="col-md-4">
-        <label asp-for="SensorId" class="form-label"></label>
-        <input asp-for="SensorId" class="form-control" />
-        <span asp-validation-for="SensorId" class="text-danger"></span>
+            <form asp-action="Create" asp-controller="Sensor" method="post" class="row g-4">
+                <div class="col-md-6">
+                    <label asp-for="SensorId" class="form-label fw-bold">Sensor ID</label>
+                    <input asp-for="SensorId" class="form-control" placeholder="Enter Sensor ID" />
+                    <span asp-validation-for="SensorId" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Location" class="form-label fw-bold">Location</label>
+                    <input asp-for="Location" class="form-control" placeholder="Enter Location" />
+                    <span asp-validation-for="Location" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Latitude" class="form-label fw-bold">Latitude</label>
+                    <input asp-for="Latitude" class="form-control" step="any" placeholder="Latitude" />
+                    <span asp-validation-for="Latitude" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Longitude" class="form-label fw-bold">Longitude</label>
+                    <input asp-for="Longitude" class="form-control" step="any" placeholder="Longitude" />
+                    <span asp-validation-for="Longitude" class="text-danger small"></span>
+                </div>
+                <div class="col-12 text-end">
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="bi bi-plus-circle me-1"></i> Add Sensor
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-    <div class="col-md-4">
-        <label asp-for="Location" class="form-label"></label>
-        <input asp-for="Location" class="form-control" />
-        <span asp-validation-for="Location" class="text-danger"></span>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h3 class="card-title mb-4">📋 Existing Sensors</h3>
+
+            @if (ViewBag.Sensors != null && ViewBag.Sensors.Count > 0)
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle">
+                        <thead class="table-light">
+                            <tr class="text-center">
+                                <th>ID</th>
+                                <th>Sensor ID</th>
+                                <th>Location</th>
+                                <th>Latitude</th>
+                                <th>Longitude</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var sensor in ViewBag.Sensors)
+                            {
+                                <tr class="text-center">
+                                    <td>@sensor.Id</td>
+                                    <td>@sensor.SensorId</td>
+                                    <td>@sensor.Location</td>
+                                    <td>@sensor.Latitude</td>
+                                    <td>@sensor.Longitude</td>
+                                    <td>
+                                        <span class="badge rounded-pill @(sensor.Status.ToString() == "Active" ? "bg-success" : "bg-secondary")">
+                                            @sensor.Status
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <form asp-action="ToggleStatus" asp-controller="Sensor" method="post" style="display:inline;">
+                                            <input type="hidden" name="id" value="@sensor.Id" />
+                                            <button type="submit" class="btn btn-sm @(sensor.Status.ToString() == "Active" ? "btn-outline-danger" : "btn-outline-success")">
+                                                @(sensor.Status.ToString() == "Active" ? "Deactivate" : "Activate")
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning">
+                    No sensors found.
+                </div>
+            }
+        </div>
     </div>
-    <div class="col-md-2">
-        <label asp-for="Latitude" class="form-label"></label>
-        <input asp-for="Latitude" class="form-control" step="any" />
-        <span asp-validation-for="Latitude" class="text-danger"></span>
-    </div>
-    <div class="col-md-2">
-        <label asp-for="Longitude" class="form-label"></label>
-        <input asp-for="Longitude" class="form-control" step="any" />
-        <span asp-validation-for="Longitude" class="text-danger"></span>
-    </div>
-    <div class="col-12">
-        <button type="submit" class="btn btn-primary">Add Sensor</button>
-    </div>
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
