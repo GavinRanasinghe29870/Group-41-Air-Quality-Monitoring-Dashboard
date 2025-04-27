@@ -12,6 +12,19 @@ function showSection(id, event) {
     event.target.closest('a').classList.add('active');
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('/simulation/status')
+        .then(response => response.json())
+        .then(data => {
+            if (data.isRunning) {
+                document.getElementById('sim-status').innerHTML = 'Simulation Status: <strong>Running</strong>';
+                document.getElementById('frequency').value = data.frequency;
+            } else {
+                document.getElementById('sim-status').innerHTML = 'Simulation Status: <strong>Stopped</strong>';
+            }
+        });
+});
+
 function startSimulation() {
     const frequencyInput = document.getElementById('frequency').value;
     const frequency = parseInt(frequencyInput);
