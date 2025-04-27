@@ -34,7 +34,7 @@
         <div class="card-header">Configure Simulation</div>
         <div class="card-body">
             <label for="frequency" class="form-label">Data Generation Frequency (minutes)</label>
-            <input type="number" class="form-control w-25" id="frequency" placeholder="e.g. 5">
+            <input type="number" min="5" max="15" class="form-control w-25" id="frequency" placeholder="Enter Frequency (5-15 min)">
             <button class="btn btn-success mt-3" onclick="startSimulation()">Start Simulation</button>
             <button class="btn btn-danger mt-3" onclick="stopSimulation()">Stop Simulation</button>
             <p class="mt-2" id="sim-status">Simulation Status: <strong>Stopped</strong></p>
