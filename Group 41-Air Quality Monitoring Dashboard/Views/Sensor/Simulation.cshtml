@@ -1,0 +1,75 @@
+﻿@model Group_41_Air_Quality_Monitoring_Dashboard.Models.Sensor
+
+@{
+	ViewData["Title"] = "Simulation Settings";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main-content" id="simulation-settings">
+    <h1 class="mb-4">Simulation Settings</h1>
+    <div class="card">
+        <div class="card-header">Configure Simulation</div>
+        <div class="card-body">
+            <label for="frequency" class="form-label">Data Generation Frequency (minutes)</label>
+            <input type="number" min="5" max="15" class="form-control w-25" id="frequency" placeholder="Enter Frequency (5-15 min)">
+            <button class="btn btn-success mt-3" onclick="startSimulation()">Start Simulation</button>
+            <button class="btn btn-danger mt-3" onclick="stopSimulation()">Stop Simulation</button>
+            <p class="mt-2" id="sim-status">Simulation Status: <strong>Stopped</strong></p>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    const simStatus = document.getElementById('simulation-running');
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetch('/simulation/status')
+            .then(response => response.json())
+            .then(data => {
+                if (data.isRunning) {
+                    document.getElementById('sim-status').innerHTML = 'Simulation Status: <strong>Running</strong>';
+                    document.getElementById('frequency').value = data.frequency;
+                } else {
+                    document.getElementById('sim-status').innerHTML = 'Simulation Status: <strong>Stopped</strong>';
+                }
+            });
+    });
+
+    function startSimulation() {
+        const frequencyInput = document.getElementById('frequency').value;
+        const frequency = parseInt(frequencyInput);
+
+        if (!frequencyInput) {
+            alert('Please enter a frequency value!');
+            return;
+        }
+
+        if (isNaN(frequency) || frequency < 5 || frequency > 15) {
+            alert('Frequency must be between 5 and 15 minutes.');
+            return;
+        }
+
+        fetch('/simulation/start', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ frequency: frequency })
+        })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('sim-status').innerHTML = 'Simulation Status: <strong>Running</strong>';
+            });
+    }
+
+    function stopSimulation() {
+        fetch('/simulation/stop', {
+            method: 'POST'
+        })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('sim-status').innerHTML = 'Simulation Status: <strong>Stopped</strong>';
+            });
+    }
+</script>

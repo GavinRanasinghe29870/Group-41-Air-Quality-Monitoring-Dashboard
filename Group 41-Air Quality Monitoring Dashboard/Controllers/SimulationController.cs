@@ -11,6 +11,16 @@ namespace Group_41_Air_Quality_Monitoring_Dashboard.Controllers
             public int Frequency { get; set; }
         }
 
+        [HttpGet("status")]
+        public IActionResult GetSimulationStatus()
+        {
+            return Ok(new
+            {
+                isRunning = SimulationService.IsSimulationRunning,
+                frequency = SimulationService.FrequencyMinutes
+            });
+        }
+
         [HttpPost("start")]
         public IActionResult StartSimulation([FromBody] StartSimulationRequest request)
         {
