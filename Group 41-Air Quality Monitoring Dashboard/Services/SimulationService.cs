@@ -14,8 +14,7 @@ namespace Group_41_Air_Quality_Monitoring_Dashboard.Services
         private readonly IServiceProvider _serviceProvider;
         private readonly Random _random = new Random();
         public static bool IsSimulationRunning = false;
-        public static int FrequencyMinutes = 5; // Default value (can be changed)
-
+        public static int FrequencyMinutes = 5;
         public SimulationService(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
