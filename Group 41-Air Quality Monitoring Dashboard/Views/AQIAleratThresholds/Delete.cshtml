@@ -1,0 +1,15 @@
+@model Group_41_Air_Quality_Monitoring_Dashboard.Models.AQIAlertThreshold
+
+<h2>Delete AQI Alert Threshold</h2>
+<p>Are you sure you want to delete this threshold?</p>
+<div>
+    <strong>Category:</strong> @Model.Category<br />
+    <strong>Min Value:</strong> @Model.MinValue<br />
+    <strong>Max Value:</strong> @Model.MaxValue<br />
+    <strong>Alert Message:</strong> @Model.AlertMessage<br />
+</div>
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

@@ -1,0 +1,26 @@
+@model Group_41_Air_Quality_Monitoring_Dashboard.Models.AQIAlertThreshold
+
+<h2>Create AQI Alert Threshold</h2>
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="Category"></label>
+        <input asp-for="Category" class="form-control" />
+        <span asp-validation-for="Category" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="MinValue"></label>
+        <input asp-for="MinValue" type="number" class="form-control" />
+        <span asp-validation-for="MinValue" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="MaxValue"></label>
+        <input asp-for="MaxValue" type="number" class="form-control" />
+        <span asp-validation-for="MaxValue" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="AlertMessage"></label>
+        <input asp-for="AlertMessage" class="form-control" />
+        <span asp-validation-for="AlertMessage" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
