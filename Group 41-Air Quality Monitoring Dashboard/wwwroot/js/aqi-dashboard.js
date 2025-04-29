@@ -1,17 +1,42 @@
-﻿const aqiSensors = [
-    { id: 'S1', name: 'Colombo 01', lat: 6.9271, lng: 79.8612, aqi: 42, history: [40, 42, 38, 44, 43, 41, 42] },
-    { id: 'S2', name: 'Colombo 05', lat: 6.8911, lng: 79.8775, aqi: 95, history: [90, 92, 91, 93, 94, 95, 95] },
-    { id: 'S3', name: 'Colombo 07', lat: 6.9022, lng: 79.8607, aqi: 120, history: [110, 115, 118, 121, 119, 122, 120] },
-    { id: 'S4', name: 'Colombo 10', lat: 6.9150, lng: 79.8700, aqi: 160, history: [155, 157, 158, 159, 161, 162, 160] }
-];
+﻿let aqiSensors = [];
+let aqiMarkers = {};
+let aqiMap;
 
-const aqiSelect = document.getElementById('sensorSelect');
-aqiSensors.forEach(sensor => {
-    const option = document.createElement('option');
-    option.value = sensor.id;
-    option.textContent = sensor.name;
-    aqiSelect.appendChild(option);
-});
+async function fetchSensors() {
+    try {
+        const res = await fetch('/Dashboards/GetSensors');
+        if (!res.ok) {
+            throw new Error('Failed to fetch sensors');
+        }
+
+        const data = await res.json();
+        aqiSensors = data;
+
+        const select = document.getElementById('sensorSelect');
+        select.innerHTML = ''; // Clear existing options
+
+        if (data.length > 0) {
+            data.forEach(sensor => {
+                const option = document.createElement('option');
+                option.value = sensor.sensorId;  // match lowercase
+                option.textContent = sensor.location;
+                select.appendChild(option);
+            });
+        } else {
+            const option = document.createElement('option');
+            option.disabled = true;
+            option.selected = true;
+            option.textContent = 'No Sensors Available';
+            select.appendChild(option);
+        }
+
+        loadMap(); // Always load map even if 0 sensors
+    } catch (error) {
+        console.error('Error fetching sensors:', error);
+        loadMap(); // Try to show empty map anyway
+    }
+}
+
 
 function aqiGetColor(aqi) {
     if (aqi <= 50) return 'green';
@@ -20,38 +45,54 @@ function aqiGetColor(aqi) {
     return 'red';
 }
 
-const aqiMap = L.map('aqiMap').setView([6.9271, 79.8612], 12);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
-}).addTo(aqiMap);
+function loadMap() {
+    if (aqiMap) {
+        aqiMap.remove(); // Clear old map if reloading
+    }
 
-const aqiMarkers = {};
-aqiSensors.forEach(sensor => {
-    const marker = L.circleMarker([sensor.lat, sensor.lng], {
-        radius: 10,
-        fillColor: aqiGetColor(sensor.aqi),
-        color: '#000',
-        weight: 1,
-        opacity: 1,
-        fillOpacity: 0.8
+    aqiMap = L.map('aqiMap').setView([6.9271, 79.8612], 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 18,
     }).addTo(aqiMap);
 
-    marker.bindPopup(`<strong>${sensor.name}</strong><br/>AQI: ${sensor.aqi}`);
-    marker.on('click', () => aqiUpdateCharts(sensor));
-    aqiMarkers[sensor.id] = marker;
-});
+    aqiSensors.forEach(sensor => {
+        const marker = L.circleMarker([sensor.latitude, sensor.longitude], {
+            radius: 10,
+            fillColor: aqiGetColor(sensor.latestAQI),
+            color: '#000',
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 0.8
+        }).addTo(aqiMap);
 
-function aqiSelectSensor(id) {
-    const sensor = aqiSensors.find(s => s.id === id);
+        marker.bindPopup(`<strong>${sensor.location}</strong><br/>AQI: ${sensor.latestAQI}`);
+        marker.on('click', () => aqiUpdateCharts(sensor.sensorId, sensor.location));
+        aqiMarkers[sensor.sensorId] = marker;
+    });
+}
+
+async function aqiSelectSensor() {
+    const select = document.getElementById('sensorSelect');
+    const sensorId = select.value;
+    const sensor = aqiSensors.find(s => s.sensorId == sensorId);
+
     if (sensor) {
-        aqiMap.setView([sensor.lat, sensor.lng], 13);
-        aqiMarkers[sensor.id].openPopup();
-        aqiUpdateCharts(sensor);
+        aqiMap.setView([sensor.latitude, sensor.longitude], 13);
+        aqiMarkers[sensor.sensorId].openPopup();
+        await aqiUpdateCharts(sensor.sensorId, sensor.location);
     }
 }
 
-function aqiUpdateCharts(sensor) {
-    document.getElementById('selected-sensor').textContent = sensor.name;
+async function aqiUpdateCharts(sensorId, locationName) {
+    document.getElementById('selected-sensor').textContent = locationName;
+
+    const historyRes = await fetch(`/Dashboards/GetSensorHistory?sensorId=${sensorId}`);
+    const history = await historyRes.json();
+
+    const allRes = await fetch('/Dashboards/GetAllCurrentAQI');
+    const allAQI = await allRes.json();
 
     const lineCtx = document.getElementById('aqiLineChart').getContext('2d');
     const pieCtx = document.getElementById('aqiPieChart').getContext('2d');
@@ -67,24 +108,18 @@ function aqiUpdateCharts(sensor) {
             labels: ['-6h', '-5h', '-4h', '-3h', '-2h', '-1h', 'Now'],
             datasets: [{
                 label: 'AQI',
-                data: sensor.history,
-                borderColor: aqiGetColor(sensor.aqi),
-                backgroundColor: aqiGetColor(sensor.aqi),
+                data: history,
+                borderColor: aqiGetColor(history[history.length - 1]),
+                backgroundColor: aqiGetColor(history[history.length - 1]),
                 fill: false,
                 tension: 0.3
             }]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: { beginAtZero: true }
-            }
-        }
+        options: { responsive: true, maintainAspectRatio: false }
     });
 
     const breakdown = [0, 0, 0, 0];
-    sensor.history.forEach(aqi => {
+    history.forEach(aqi => {
         if (aqi <= 50) breakdown[0]++;
         else if (aqi <= 100) breakdown[1]++;
         else if (aqi <= 150) breakdown[2]++;
@@ -100,29 +135,31 @@ function aqiUpdateCharts(sensor) {
                 backgroundColor: ['green', 'yellow', '#FF8C00', 'red']
             }]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
-        }
+        options: { responsive: true, maintainAspectRatio: false }
     });
 
-    const barColors = aqiSensors.map(s => aqiGetColor(s.aqi));
+    const barColors = allAQI.map(s => aqiGetColor(s.latestAQI));
     window.barChart = new Chart(barCtx, {
         type: 'bar',
         data: {
-            labels: aqiSensors.map(s => s.name),
+            labels: allAQI.map(s => s.location),
             datasets: [{
                 label: 'Current AQI',
-                data: aqiSensors.map(s => s.aqi),
+                data: allAQI.map(s => s.latestAQI),
                 backgroundColor: barColors
             }]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: { beginAtZero: true }
-            }
-        }
+        options: { responsive: true, maintainAspectRatio: false }
     });
 }
+
+// Run when page is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    fetchSensors();
+
+    // Hook dropdown selection change
+    const select = document.getElementById('sensorSelect');
+    select.addEventListener('change', aqiSelectSensor);
+});
+// at bottom of aqi-dashboard.js
+fetchSensors();

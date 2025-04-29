@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Group_41_Air_Quality_Monitoring_Dashboard</RootNamespace>
+    <UserSecretsId>9a2fd1c9-1ddf-4ac9-9f9e-73e73dc52f06</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
