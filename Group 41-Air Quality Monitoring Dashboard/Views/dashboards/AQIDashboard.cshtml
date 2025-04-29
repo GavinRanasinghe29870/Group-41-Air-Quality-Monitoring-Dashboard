@@ -5,45 +5,62 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/aqi-dashboard.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 }
 
 <div class="aqi-dashboard-wrapper">
     <div class="aqi-sidebar">
         <div class="aqi-brand">AQI Monitor</div>
+
         <section>
             <h2>Sensor Selector</h2>
             <label for="sensorSelect">Choose a sensor:</label>
-            <select id="sensorSelect" onchange="aqiSelectSensor(this.value)"></select>
+            <select id="sensorSelect" onchange="aqiSelectSensor(parseInt(this.value))">
+                <option value="" disabled selected>-- Select a Sensor --</option>
+            </select>
         </section>
+
         <section>
             <h2>Legend</h2>
             <div class="aqi-legend">
-                <div class="aqi-legend-item"><div class="aqi-color-box" style="background: green;"></div>Good (0–50)</div>
-                <div class="aqi-legend-item"><div class="aqi-color-box" style="background: yellow;"></div>Moderate (51–100)</div>
-                <div class="aqi-legend-item"><div class="aqi-color-box" style="background: #FF8C00;"></div>Unhealthy (101–150)</div>
-                <div class="aqi-legend-item"><div class="aqi-color-box" style="background: red;"></div>Very Unhealthy (151+)</div>
+                <div class="aqi-legend-item">
+                    <div class="aqi-color-box" style="background: green;"></div> Good (0–50)
+                </div>
+                <div class="aqi-legend-item">
+                    <div class="aqi-color-box" style="background: yellow;"></div> Moderate (51–100)
+                </div>
+                <div class="aqi-legend-item">
+                    <div class="aqi-color-box" style="background: #FF8C00;"></div> Unhealthy (101–150)
+                </div>
+                <div class="aqi-legend-item">
+                    <div class="aqi-color-box" style="background: red;"></div> Very Unhealthy (151+)
+                </div>
             </div>
         </section>
     </div>
 
     <div class="aqi-main-content">
         <header class="aqi-header">Colombo AQI Dashboard</header>
+
         <div class="aqi-content-scroll">
             <div id="aqiMap" class="aqi-map"></div>
+
             <h3>Sensor: <span id="selected-sensor">None</span></h3>
 
             <div class="aqi-charts-section">
                 <div class="aqi-chart-container">
                     <h4>AQI Over Time (Line)</h4>
-                    <canvas id="aqiLineChart"></canvas>
+                    <canvas id="aqiLineChart" height="250"></canvas>
                 </div>
+
                 <div class="aqi-chart-container">
                     <h4>Current AQI Category (Pie)</h4>
-                    <canvas id="aqiPieChart"></canvas>
+                    <canvas id="aqiPieChart" height="250"></canvas>
                 </div>
+
                 <div class="aqi-chart-container">
                     <h4>Compare with Other Sensors (Bar)</h4>
-                    <canvas id="aqiBarChart"></canvas>
+                    <canvas id="aqiBarChart" height="250"></canvas>
                 </div>
             </div>
         </div>
